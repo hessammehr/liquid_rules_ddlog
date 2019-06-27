@@ -36,5 +36,5 @@ CanFollow(Route{node1, port1, port2}, Pull{node2, port3}) :- Edge(_, node1, node
 CanFollow(Route{node1, port1, port2}, Route{node2, port3, port4}) :- Edge(_, node1, node2, port2, port3),
                                                                      Can(Route{node1, port1, port2}),
                                                                      Can(Route{node2, port3, port4}).
-CanFollow(Pull{node, port1}, Push{node, port2}) :- Can(Push{node, port1}),
-                                                   Can(Pull{node, port2}).
+CanFollow(Pull{node, port1}, Push{node, port2}) :- Can(Pull{node, port1}),
+                                                   Can(Push{node, port2}).
