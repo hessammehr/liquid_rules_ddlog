@@ -1,0 +1,40 @@
+typedef Operation = Source { node: string, out_port: string }
+                  | Push { node: string, out_port: string }
+                  | Route { node: string, in_port: string, out_port: string }
+                  | Sink { node: string, in_port: string }
+                  | Pull { node: string, in_port: string }
+
+input relation Can(op: Operation)
+
+input relation Edge(edge_id:string, from_node: string, to_node: string, from_port: string, to_port: string)
+
+output relation CanFollow(op1: Operation, op2: Operation)
+CanFollow(Source{node1, port1}, Sink{node2, port2}) :- Edge(_, node1, node2, port1, port2),
+                                                       Can(Source{node1, port1}),
+                                                       Can(Sink{node2, port2}).
+CanFollow(Source{node1, port1}, Pull{node2, port2}) :- Edge(_, node1, node2, port1, port2),
+                                                       Can(Source{node1, port1}),
+                                                       Can(Pull{node2, port2}).
+CanFollow(Source{node1, port1}, Route{node2, port2, port3}) :- Edge(_, node1, node2, port1, port2),
+                                                               Can(Source{node1, port1}),
+                                                               Can(Route{node2, port2, port3}).
+CanFollow(Push{node1, port1}, Sink{node2, port2}) :- Edge(_, node1, node2, port1, port2),
+                                                       Can(Push{node1, port1}),
+                                                       Can(Sink{node2, port2}).
+CanFollow(Push{node1, port1}, Pull{node2, port2}) :- Edge(_, node1, node2, port1, port2),
+                                                       Can(Push{node1, port1}),
+                                                       Can(Pull{node2, port2}).
+CanFollow(Push{node1, port1}, Route{node2, port2, port3}) :- Edge(_, node1, node2, port1, port2),
+                                                               Can(Push{node1, port1}),
+                                                               Can(Route{node2, port2, port3}).
+CanFollow(Route{node1, port1, port2}, Sink{node2, port3}) :- Edge(_, node1, node2, port2, port3),
+                                                             Can(Route{node1, port1, port2}),
+                                                             Can(Sink{node2, port3}).
+CanFollow(Route{node1, port1, port2}, Pull{node2, port3}) :- Edge(_, node1, node2, port2, port3),
+                                                             Can(Route{node1, port1, port2}),
+                                                             Can(Pull{node2, port3}).
+CanFollow(Route{node1, port1, port2}, Route{node2, port3, port4}) :- Edge(_, node1, node2, port2, port3),
+                                                                     Can(Route{node1, port1, port2}),
+                                                                     Can(Route{node2, port3, port4}).
+CanFollow(Pull{node, port1}, Push{node, port2}) :- Can(Push{node, port1}),
+                                                   Can(Pull{node, port2}).
