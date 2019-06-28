@@ -38,3 +38,11 @@ CanFollow(Route{node1, port1, port2}, Route{node2, port3, port4}) :- Edge(_, nod
                                                                      Can(Route{node2, port3, port4}).
 CanFollow(Pull{node, port1}, Push{node, port2}) :- Can(Pull{node, port1}),
                                                    Can(Push{node, port2}).
+
+output relation Interpolate(op1: Operation, op2: Operation, ops: Vec<Operation>)
+
+Interpolate(op1, op2, vec_empty()) :- CanFollow(op1, op2).
+extern function std_vec_insert_imm (v: Vec<'X>, x: 'X): Vec<'X>
+Interpolate(op1, op2, std_vec_insert_imm(v, op)) :- Interpolate(op1, op, v),
+                                                    CanFollow(op, op2),
+                                                    not vec_contains(v, op).

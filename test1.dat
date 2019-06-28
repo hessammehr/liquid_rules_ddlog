@@ -1,0 +1,11 @@
+start;
+
+insert Can(Source{"n1", "1"}),
+insert Can(Route{"n2", "2", "3"}),
+insert Can(Sink{"n3", "4"});
+
+insert Edge("e1", "n1", "n2", "1", "2"),
+insert Edge("e2", "n2", "n3", "3", "4");
+
+commit;
+dump;
