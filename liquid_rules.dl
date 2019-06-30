@@ -46,3 +46,16 @@ extern function std_vec_insert_imm (v: Vec<'X>, x: 'X): Vec<'X>
 Interpolate(op1, op2, std_vec_insert_imm(v, op)) :- Interpolate(op1, op, v),
                                                     CanFollow(op, op2),
                                                     not vec_contains(v, op).
+
+function shortest(g: Group<Vec<'X>>): Vec<'X> = {
+    var result: Vec<'X> = group_first(g);
+    for (v in g) {
+        if (vec_len(v) < vec_len(result)) {
+            result = v
+        }
+    };
+    result
+}
+output relation Shortest(a: Operation, b: Operation, ops: Vec<Operation>)
+
+Shortest(a, b, ops) :- Interpolate(a, b, v), var ops = Aggregate((a, b), shortest(v)).
